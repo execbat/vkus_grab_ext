@@ -11,6 +11,7 @@ from .rough_env_1_cfg import G1RoughEnv1Cfg
 
 
 
+
 @configclass
 class G1FlatEnv1Cfg(G1RoughEnv1Cfg):
     def __post_init__(self):
@@ -21,10 +22,11 @@ class G1FlatEnv1Cfg(G1RoughEnv1Cfg):
         self.scene.terrain.terrain_type = "plane"
         self.scene.terrain.terrain_generator = None
         # no height scan
-        self.scene.height_scanner = None
-        self.observations.policy.height_scan = None
+        #self.scene.height_scanner = None
+        #self.observations.policy.height_scan = None
         # no terrain curriculum
         self.curriculum.terrain_levels = None
+        '''
 
         # Rewards
         self.rewards.track_ang_vel_z_exp.weight = 1.0
@@ -41,7 +43,7 @@ class G1FlatEnv1Cfg(G1RoughEnv1Cfg):
         self.commands.base_velocity.ranges.lin_vel_x = (0.0, 1.0)
         self.commands.base_velocity.ranges.lin_vel_y = (-0.5, 0.5)
         self.commands.base_velocity.ranges.ang_vel_z = (-1.0, 1.0)
-
+        '''
 
 
 
@@ -61,6 +63,7 @@ class G1FlatEnv1Cfg_PLAY(G1FlatEnv1Cfg):
 
         # switch ON debug vis
         #self.scene.lazy_sensor_update = False
-        self.scene.lidar_top.debug_vis = True
-        self.scene.imu.debug_vis = True
-  
+        #self.observations.policy.rtx_lidar_points.params["debug"] = True
+        #self.scene.lidar_top.debug_vis = True
+        #self.scene.imu.debug_vis = True
+        #self.scene.height_scanner.debug_vis=True

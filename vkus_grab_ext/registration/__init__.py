@@ -1,7 +1,7 @@
 #isaaclab_custom_ext/registration/__init__.py
 import gymnasium as gym
 
-from isaaclab_custom_ext import agents
+from vkus_grab_ext import agents
 #from isaaclab_custom_ext import custom_env_1
 
 ##
