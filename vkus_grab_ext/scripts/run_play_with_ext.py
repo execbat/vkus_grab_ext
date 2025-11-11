@@ -3,7 +3,7 @@ from pathlib import Path
 
 def _force_register_gym_ids():
     os.environ.setdefault("ISAACLAB_TASKS_EXTRA_PACKAGES", "vkus_grab_ext")
-    importlib.import_module("ivkus_grab_ext.registration")
+    importlib.import_module("vkus_grab_ext.registration")
 
 def _add_paths_and_patch_cli_args():
     this_file = Path(__file__).resolve()

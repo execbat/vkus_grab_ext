@@ -13,7 +13,7 @@ class G1RoughPPORunnerCfg(RslRlOnPolicyRunnerCfg):
     num_steps_per_env = 24
     max_iterations = 15000000000
     save_interval = 50
-    experiment_name = "custom_unitree_g1_rough"
+    experiment_name = "vkus_experiment"
     empirical_normalization = True
     policy = RslRlPpoActorCriticCfg(
         init_noise_std=0.6,
@@ -44,7 +44,7 @@ class G1FlatPPORunnerCfg(RslRlOnPolicyRunnerCfg):
     num_steps_per_env = 24
     max_iterations = 15000000000
     save_interval = 50
-    experiment_name = "custom_unitree_g1_flat"
+    experiment_name = "vkus_experiment"
     empirical_normalization = True
     policy = RslRlPpoActorCriticCfg(
         init_noise_std=0.6,

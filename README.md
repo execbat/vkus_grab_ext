@@ -94,7 +94,7 @@ vkus_grab_ext.scripts.run_train_with_ext \
 vkus_grab_ext.scripts.run_play_with_ext \
 --task Vkus_Ext-Isaac-Velocity-Flat-G1-Play-v0 \
 --num_envs 1 \
---checkpoint ./logs/rsl_rl/custom_unitree_g1_flat/<experiment folder name (contains date-time)>/<model_name>.pt \
+--checkpoint ./logs/rsl_rl/vkus_experiment/<experiment folder name (contains date-time)>/<model_name>.pt \
 --rendering_mode performance
 ```
 
@@ -117,7 +117,7 @@ vkus_grab_ext.scripts.run_play_with_ext \
 --task Vkus_Ext-Isaac-Velocity-Flat-G1-Play-v1 \
 --num_envs 1 \
 --enable_cameras \
---checkpoint ./logs/rsl_rl/custom_unitree_g1_flat/<experiment folder name (contains date-time)>/<model_name>.pt \
+--checkpoint ./logs/rsl_rl/vkus_experiment/<experiment folder name (contains date-time)>/<model_name>.pt \
 --rendering_mode performance
 ```
 
