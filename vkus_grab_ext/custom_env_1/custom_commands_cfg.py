@@ -39,10 +39,21 @@ class CommandsCfg:
         heading_control_stiffness=0.5,
         debug_vis=True,
         dim = 9,
-        ranges=((-1.0, 1.0),) * 9,
-        
+        ranges=((-1.0, 1.0),) * 9,        
     )
     
+    velocity = UniformVectorCommandCfg(
+        asset_name="robot",
+        resampling_time_range=(10.0, 10.0),
+        rel_standing_envs=0.02,
+        rel_heading_envs=1.0,
+        heading_command=True,
+        heading_control_stiffness=0.5,
+        debug_vis=True,
+        dim = 1,
+        ranges=((0.0, 1.0),) * 1,       
+    )
+    '''
     dof_mask = BernoulliMaskCommandCfg(
         asset_name="robot",
         resampling_time_range=(10.0, 10.0),
@@ -56,6 +67,7 @@ class CommandsCfg:
         ranges=((-1.0, 1.0),) * 9,
         
     )
+    '''
  
  
 

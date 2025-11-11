@@ -44,13 +44,12 @@ class ObservationsCfg:
         joint_pos = ObsTerm(func=mdp.joint_pos_rel, noise=Unoise(n_min=-0.01, n_max=0.01))
         joint_vel = ObsTerm(func=mdp.joint_vel_rel, noise=Unoise(n_min=-1.5, n_max=1.5))
         actions = ObsTerm(func=mdp.last_action)
-        
-         
+                
               
         # CUSTOM ADDED OBSERVATIONS
         axis_act_norm = ObsTerm(func=mdp.joint_pos_limit_normalized)
         target_axis_cmd_norm = ObsTerm(func=mdp.generated_commands, params={"command_name": "target_joint_pose"})
-        target_axis_swtchr_mask = ObsTerm(func=mdp.generated_commands, params={"command_name": "dof_mask"})
+        #target_axis_swtchr_mask = ObsTerm(func=mdp.generated_commands, params={"command_name": "dof_mask"})
 
 
         def __post_init__(self):
