@@ -49,6 +49,7 @@ class ObservationsCfg:
         # CUSTOM ADDED OBSERVATIONS
         axis_act_norm = ObsTerm(func=mdp.joint_pos_limit_normalized)
         target_axis_cmd_norm = ObsTerm(func=mdp.generated_commands, params={"command_name": "target_joint_pose"})
+        override_velocity = ObsTerm(func=mdp.generated_commands, params={"command_name": "override_velocity"})
         #target_axis_swtchr_mask = ObsTerm(func=mdp.generated_commands, params={"command_name": "dof_mask"})
 
 

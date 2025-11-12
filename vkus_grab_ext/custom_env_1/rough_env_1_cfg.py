@@ -46,7 +46,7 @@ import omni
 #from .regex_ray_caster import RegexRayCaster
 
 
-MAX_OBS = 30
+
         
 @configclass
 class G1RoughEnv1Cfg(CustomLocomotionVelocityRoughEnvCfg):
@@ -61,7 +61,7 @@ class G1RoughEnv1Cfg(CustomLocomotionVelocityRoughEnvCfg):
         self.scene.robot = FRANKA_PANDA_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
         
         
-        self.episode_length_s = 15.0
+        self.episode_length_s = 40.0
         
         
         
@@ -238,7 +238,7 @@ class G1RoughEnv1Cfg_PLAY(G1RoughEnv1Cfg):
         super().__post_init__()
         
         
-        self.episode_length_s = 15.0
+        self.episode_length_s = 40.0
 
         # Randomization
         self.events.push_robot = None

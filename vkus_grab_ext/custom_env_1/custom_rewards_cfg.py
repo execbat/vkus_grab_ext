@@ -15,6 +15,14 @@ class Rewards(RewardsCfg):
     
     feet_air_time = None
     undesired_contacts = None
+    action_rate_l2 = None
+    ang_vel_xy_l2 = None
+    dof_acc_l2 = None
+    dof_pos_limits = None
+    dof_torques_l2 = None
+    flat_orientation_l2 = None 
+    lin_vel_z_l2 = None
+    
     
     
     

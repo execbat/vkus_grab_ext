@@ -42,7 +42,7 @@ class CommandsCfg:
         ranges=((-1.0, 1.0),) * 9,        
     )
     
-    velocity = UniformVectorCommandCfg(
+    override_velocity = UniformVectorCommandCfg(
         asset_name="robot",
         resampling_time_range=(10.0, 10.0),
         rel_standing_envs=0.02,
