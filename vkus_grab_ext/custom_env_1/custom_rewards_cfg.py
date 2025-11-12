@@ -15,13 +15,15 @@ class Rewards(RewardsCfg):
     
     feet_air_time = None
     undesired_contacts = None
-    action_rate_l2 = None
     ang_vel_xy_l2 = None
-    dof_acc_l2 = None
     dof_pos_limits = None
-    dof_torques_l2 = None
     flat_orientation_l2 = None 
     lin_vel_z_l2 = None
+    
+    action_rate_l2 =      RewTerm(func=mdp.action_rate_l2,   weight=-0.001)
+    dof_torques_l2 =      RewTerm(func=mdp.joint_torques_l2, weight=-1e-6)
+    joint_vel_l2 =        RewTerm(func=mdp.joint_vel_l2,     weight= -1.0e-5)
+    dof_acc_l2 =          RewTerm(func=mdp.joint_acc_l2,     weight=-2e-07)
     
     
     
