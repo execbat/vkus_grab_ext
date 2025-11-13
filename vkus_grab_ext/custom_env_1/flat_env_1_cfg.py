@@ -7,7 +7,7 @@ from isaaclab.managers import SceneEntityCfg
 from isaaclab.utils import configclass
 
 from .rough_env_1_cfg import G1RoughEnv1Cfg
-
+from .custom_commands_cfg import TeleopCommandsCfg
 
 
 
@@ -51,6 +51,9 @@ class G1FlatEnv1Cfg_PLAY(G1FlatEnv1Cfg):
     def __post_init__(self) -> None:
         # post init of parent
         super().__post_init__()
+        
+        # receive UDP commands
+        self.commands = TeleopCommandsCfg()
 
         # make a smaller scene for play
         self.scene.num_envs = 50

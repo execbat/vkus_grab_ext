@@ -41,6 +41,7 @@ from isaaclab.sim.spawners.from_files.from_files_cfg import  UsdFileCfg
 
 import numpy as np
 import omni
+from .custom_commands_cfg import TeleopCommandsCfg
 # from isaacsim.sensors.rtx import LidarRtx
 
 #from .regex_ray_caster import RegexRayCaster
@@ -237,6 +238,8 @@ class G1RoughEnv1Cfg_PLAY(G1RoughEnv1Cfg):
         # post init of parent
         super().__post_init__()
         
+        # receive UDP commands
+        self.commands = TeleopCommandsCfg()
         
         self.episode_length_s = 40.0
 

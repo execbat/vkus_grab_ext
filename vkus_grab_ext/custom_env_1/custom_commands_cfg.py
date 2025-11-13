@@ -9,7 +9,7 @@ from isaaclab.markers.config import (
     BLUE_ARROW_X_MARKER_CFG,
 )
 
-
+from .commands_udp import UdpTargetJointPoseCommandCfg, UdpOverrideVelocityCommandCfg, UdpTargetJointPoseCommand, UdpOverrideVelocityCommand
 
  
 @configclass
@@ -68,6 +68,37 @@ class CommandsCfg:
         
     )
     '''
- 
+
+@configclass
+class TeleopCommandsCfg:
+    """Command specifications for the MDP."""
+   
+    target_joint_pose = UdpTargetJointPoseCommandCfg(
+        class_type=UdpTargetJointPoseCommand,
+        asset_name="robot",
+        resampling_time_range=(1e9, 1e9),
+        dim=9,
+        ranges=((-1.0, 1.0),) * 9,
+        default=0.0,
+        ip="0.0.0.0",
+        port=55001,            
+        packet_format="json",
+        struct_fmt="<10f",    
+        debug_vis=True,
+    )
+
+    override_velocity = UdpOverrideVelocityCommandCfg(
+        class_type=UdpOverrideVelocityCommand,
+        asset_name="robot",
+        resampling_time_range=(1e9, 1e9),
+        dim=1,
+        ranges=((0.0, 1.0),),
+        default=0.0,
+        ip="0.0.0.0",
+        port=55001,           
+        packet_format="json",
+        struct_fmt="<10f",
+        debug_vis=True,
+    )
  
 
