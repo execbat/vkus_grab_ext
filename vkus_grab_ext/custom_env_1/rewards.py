@@ -26,13 +26,14 @@ def velocity_profile_reward(
     target_command_name: str = "target_joint_pose",
     kv: float = 1.0,
     kp: float = 1.0,
+    sign_deadband: float = 1e-3,   # tolerance for sign check near zero
     
 ) -> torch.Tensor:
     """
-    Ревард: насколько модуль скорости по осям соответствует эталонному профилю v_des(dist).
-    - dist считается в нормированных координатах [-1, 1]
-    - beta зависит от команды velocity в [0, 1]
-    - ревард для каждого env = exp(-MSE / std_vel^2), где MSE по всем осям.
+    Reward: Currently, the velocity magnitude along the axes corresponds to the reference profile v_des(dist).
+    - distance is calculated in normalized coordinates [-1, 1]
+    - vel_etalon_norm depends on the override_velocity command in [0, 1]
+    - reward for each env = exp(-MSE / std_vel^2), where MSE is along all axes.
     """
     asset: Articulation = env.scene[asset_cfg.name]
     
@@ -61,16 +62,24 @@ def velocity_profile_reward(
     
     vel_regulation = env.command_manager.get_command(ctrl_vel_command_name)     # [N]
     
+    # REWARD ONLY FOR AXES WHICH MOVES TOWARDS THE TARGET
+    same_sign = (torch.sign(pos_diff_norm) == torch.sign(joint_act_norm))
+    near_zero = (pos_diff_norm.abs() <= sign_deadband) | (joint_act_norm.abs() <= sign_deadband)
+    on_path_mask = (same_sign | near_zero).to(dtype=dtype)
+    active_cnt = on_path_mask.sum(dim=-1).clamp_min(1.0) 
+    
     
     # Getting desired axis velocities based on pos_diff
     vel_etalon_norm = torch.tanh(pos_diff_norm) * vel_regulation
     
     # CALC VEL DIFF REWARD
     joint_vel_diff_norm = vel_etalon_norm - joint_vel_act_norm
-    vel_reward = torch.exp(- joint_vel_diff_norm**2 / kv**2).mean(dim=-1)
+    vel_axis_reward = torch.exp(- joint_vel_diff_norm**2 / kv**2) * on_path_mask   # axes who moves out from the target has reward 0                   
+    vel_reward = vel_axis_reward.sum(dim=-1) / active_cnt 
     
     # CALC POS DIFF REWARD
-    pos_reward = torch.exp(- pos_diff_norm**2 / kp**2).mean(dim=-1)
+    pos_axis_reward = torch.exp(- pos_diff_norm**2 / kp**2) * on_path_mask                             #.mean(dim=-1)
+    pos_reward = pos_axis_reward.sum(dim=-1) / active_cnt
     
     # OVERALL REWARD
     overall_reward = vel_reward * pos_reward																									

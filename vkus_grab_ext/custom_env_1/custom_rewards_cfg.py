@@ -16,24 +16,26 @@ class Rewards(RewardsCfg):
     feet_air_time = None
     undesired_contacts = None
     ang_vel_xy_l2 = None
-    dof_pos_limits = None
+    
     flat_orientation_l2 = None 
     lin_vel_z_l2 = None
     
-    action_rate_l2 =      RewTerm(func=mdp.action_rate_l2,   weight=-0.001)
-    dof_torques_l2 =      RewTerm(func=mdp.joint_torques_l2, weight=-1e-6)
+    action_rate_l2 =      RewTerm(func=mdp.action_rate_l2,   weight=-0.00001) 
+    dof_torques_l2 =      RewTerm(func=mdp.joint_torques_l2, weight=-1e-8)  
     joint_vel_l2 =        RewTerm(func=mdp.joint_vel_l2,     weight= -1.0e-5)
     dof_acc_l2 =          RewTerm(func=mdp.joint_acc_l2,     weight=-2e-07)
     
-    
+    dof_pos_limits = RewTerm(func=mdp.joint_pos_limits, weight=-1.0)
     
     
     velocity_profile_reward = RewTerm(
         func=velocity_profile_reward,
         weight=1.0,
-#        params={
-#            "alpha": 0.5,
-#            "use_xy": True,
-#            "max_dist": 10.0,
-#        },
+        params={
+            "asset_cfg": SceneEntityCfg("robot"),
+            "ctrl_vel_command_name": "override_velocity",
+            "target_command_name":  "target_joint_pose",
+            "kv":  0.5, # 1.0,
+            "kp":  0.5, #1.0,
+        },
     )  
