@@ -32,22 +32,23 @@ class CurriculumCfg:
     ja_100k = CurrTerm(func=mdp.modify_reward_weight,
         params={"term_name":"dof_acc_l2","weight":-1e-5,"num_steps":100_000})         
         
-    
-    # WEIGHT SCALAR SMOOTH CHANGERS    (bad practice to increase the reward weights smoothly) 
-    tr_lin_warmup = CurrTerm(
+    '''
+    # WEIGHT SCALAR SMOOTH CHANGERS    
+    overshoot_penalty_curriculum = CurrTerm(
         func=mdp.modify_term_cfg,
         params={
-            "address": "rewards.track_lin_vel_xy_exp.weight", 
+            "address": "rewards.velocity_profile_reward.params.k_moving_away", 
             "modify_fn": lerp_scalar,          
             "modify_params": {
-                            "start": 0.0, 
+                            "start": 0.1, 
                             "end": 2.0, 
-                            "num_steps": 10_000, 
-                            "start_after": 1_000,
-                            "log_name": "track_lin_reward_weight"
+                            "num_steps": 1000_000, 
+                            "start_after": 2_000,
+                            "log_name": "overshoot_penalty_curriculum"
                             },
         },
     )
+    '''
     tr_yaw_warmup = CurrTerm(
         func=mdp.modify_term_cfg,
         params={
