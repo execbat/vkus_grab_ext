@@ -28,7 +28,8 @@ def velocity_profile_reward(
     kv: float = 1.0,
     kp: float = 1.0,
     sign_deadband: float = 1e-2,
-    k_in_position: float = 2.0, # additional reward for being inside of the deadband
+    k_in_position: float = 2.0, # additional reward weight for being inside of the deadband
+    k_moving_away: float = 0.1, # additional penalty weight for going away from the target
 ) -> torch.Tensor:
     asset: Articulation = env.scene[asset_cfg.name]
 
@@ -82,11 +83,13 @@ def velocity_profile_reward(
 
     # === Mask: "moving towards target" — compare position error sign with VELOCITY sign ===
     same_sign = (torch.sign(pos_diff_norm) == torch.sign(joint_vel_act_norm))
+    diff_sign = (torch.sign(pos_diff_norm) != torch.sign(joint_vel_act_norm))
     near_zero = pos_diff_norm.abs() <= sign_deadband   # | (joint_vel_act_norm.abs() <= sign_deadband)
     on_path_mask = (same_sign | near_zero).to(dtype=dtype)                     # [N, J]
     
     
     in_position_reward = near_zero * k_in_position
+    moving_away_penalty = diff_sign * -1 * k_moving_away + same_sign * 1
     
 
     # Reference velocity (in normalized units)
@@ -94,7 +97,7 @@ def velocity_profile_reward(
 
     # --- Velocity reward (mask by direction, weight-average with velocity weights) ---
     joint_vel_diff_norm = vel_etalon_norm - joint_vel_act_norm
-    vel_term = torch.exp(-(joint_vel_diff_norm ** 2) / (kv ** 2))              # [N, J]
+    vel_term = torch.exp(-(joint_vel_diff_norm ** 2) / (kv ** 2)) * moving_away_penalty             # [N, J]
 #    vel_num = (vel_term *  axis_vel_weights).sum(dim=-1)                       # [N]      # removed on_path_mask
 #    vel_den = axis_vel_weights.sum(dim=-1).clamp_min(eps)                      # [N]      # removed on_path_mask
     vel_reward = vel_term.mean(dim=-1)  #vel_num / vel_den                                             # [0..1]

@@ -43,7 +43,7 @@ class Rewards(RewardsCfg):
             "target_command_name":  "target_joint_pose",
             "kv":  0.25, # 1.0,
             "kp":  0.25, # 1.0,
-            "sign_deadband": 0.002,
+            "sign_deadband": 0.005,
             "k_in_position": 2.0, # additional reward for being inside of the deadband
         },
     )  

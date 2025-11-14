@@ -64,36 +64,36 @@ class CurriculumCfg:
     )
     
 
-    
+    '''
     # COMMAND RANGE SMOOTH CHANGERS 
-    cmd_lin_x_range = CurrTerm(
+    target_joint_pose_resample_time_range_curricilum = CurrTerm(
         func=mdp.modify_term_cfg,
         params={
-            "address": "commands.base_velocity.ranges.lin_vel_x",
+            "address": "commands.target_joint_pose.resampling_time_range",
             "modify_fn": lerp_tuple,
             "modify_params": {
-                            "start": (0.0, 0.1), 
-                            "end": (0.0, 1.0), 
-                            "num_steps": 100_000, 
-                            "start_after": 1_000,
-                            "log_name": "cmd_lin_x_range"
+                            "start": (10.0, 10.0), 
+                            "end": (0.0, 0.0), 
+                            "num_steps": 1000_000, 
+                            "start_after": 2_000,
+                            "log_name": "target_joint_pose_resample_time_range"
                             },
             
         },
     )
     
-    cmd_yaw_range_sched = CurrTerm(
+    override_velocity_resample_time_range_curriculum = CurrTerm(
         func=mdp.modify_term_cfg,
         params={
-            "address": "commands.base_velocity.ranges.ang_vel_z",
+            "address": "commands.override_velocity.resampling_time_range",
             "modify_fn": lerp_tuple,
             "modify_params": {
-                            "start": (-0.1, 0.1),
-                            "end":   (-1.0, 1.0),
-                            "num_steps": 100_000,
-                            "start_after": 1_000,
-                            "log_name": "cmd_ang_yaw_range"
+                            "start": (10.0, 10.0),
+                            "end":   (0.0, 0.0),
+                            "num_steps": 1000_000,
+                            "start_after": 2_000,
+                            "log_name": "override_velocity_resample_time_range"
                             },
         },
     ) 
-    '''
+    
