@@ -73,7 +73,7 @@ class CurriculumCfg:
             "modify_fn": lerp_tuple,
             "modify_params": {
                             "start": (10.0, 10.0), 
-                            "end": (0.0, 0.0), 
+                            "end": (1.0, 1.0), 
                             "num_steps": 1000_000, 
                             "start_after": 2_000,
                             "log_name": "target_joint_pose_resample_time_range"
@@ -89,7 +89,7 @@ class CurriculumCfg:
             "modify_fn": lerp_tuple,
             "modify_params": {
                             "start": (10.0, 10.0),
-                            "end":   (0.0, 0.0),
+                            "end":   (1.0, 1.0),
                             "num_steps": 1000_000,
                             "start_after": 2_000,
                             "log_name": "override_velocity_resample_time_range"
