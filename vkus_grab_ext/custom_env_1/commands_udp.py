@@ -49,14 +49,14 @@ class UdpPacketHub:
                 print(f"[UDP] recv error: {ex}", flush=True)
                 break
 
-            print(f"[UDP] recv {len(data)} bytes on {self.addr}", flush=True)
+            #print(f"[UDP] recv {len(data)} bytes on {self.addr}", flush=True)
 
             parsed = self._parse_packet(data)
             if parsed is None:
                 print(f"[UDP] parse FAILED (format={self.packet_format})", flush=True)
                 continue
 
-            print(f"[UDP] parse OK -> keys {list(parsed.keys())}", flush=True)
+            #print(f"[UDP] parse OK -> keys {list(parsed.keys())}", flush=True)
             with self._lock:
                 self._latest = parsed
 
@@ -180,7 +180,7 @@ class UdpTargetJointPoseCommand(CommandTerm):
         vec = torch.clamp(vec, self._low.squeeze(0), self._high.squeeze(0))
         self._cmd[:] = vec.unsqueeze(0).expand(self.num_envs, -1)
         self.metrics["packets_applied"] += 1.0
-        print(f"[CMD] target_pose apply: {vec.tolist()}", flush=True)
+        #print(f"[CMD] target_pose apply: {vec.tolist()}", flush=True)
 
 UdpTargetJointPoseCommandCfg.class_type = UdpTargetJointPoseCommand
 
@@ -265,6 +265,6 @@ class UdpOverrideVelocityCommand(CommandTerm):
         vec = torch.clamp(vec, self._low.squeeze(0), self._high.squeeze(0))
         self._cmd[:] = vec.unsqueeze(0).expand(self.num_envs, -1)
         self.metrics["packets_applied"] += 1.0
-        print(f"[CMD] override apply: {vec.tolist()}", flush=True)
+        #print(f"[CMD] override apply: {vec.tolist()}", flush=True)
 
 UdpOverrideVelocityCommandCfg.class_type = UdpOverrideVelocityCommand

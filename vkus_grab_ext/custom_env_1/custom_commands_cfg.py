@@ -84,7 +84,7 @@ class TeleopCommandsCfg:
         port=55001,            
         packet_format="json",
         struct_fmt="<10f",    
-        debug_vis=True,
+        debug_vis=False,
     )
 
     override_velocity = UdpOverrideVelocityCommandCfg(
@@ -98,7 +98,7 @@ class TeleopCommandsCfg:
         port=55001,           
         packet_format="json",
         struct_fmt="<10f",
-        debug_vis=True,
+        debug_vis=False,
     )
  
 

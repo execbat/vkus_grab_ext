@@ -61,7 +61,7 @@ FRANKA_PANDA_CFG = ArticulationCfg(
             "panda_joint1": 0.0,
             "panda_joint2": 0.0,
             "panda_joint3": 0.0,
-            "panda_joint4": -0.0872665,
+            "panda_joint4": -1.5,
             "panda_joint5": 0.0,
             "panda_joint6": 1.5,
             "panda_joint7": 0.0,

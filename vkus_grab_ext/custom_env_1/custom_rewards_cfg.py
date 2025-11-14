@@ -20,13 +20,19 @@ class Rewards(RewardsCfg):
     flat_orientation_l2 = None 
     lin_vel_z_l2 = None
     
-    action_rate_l2 =      RewTerm(func=mdp.action_rate_l2,   weight=-0.00001) 
-    dof_torques_l2 =      RewTerm(func=mdp.joint_torques_l2, weight=-1e-8)  
+    action_rate_l2 =      RewTerm(func=mdp.action_rate_l2,   weight=-0.001) 
+    dof_torques_l2 =      RewTerm(func=mdp.joint_torques_l2, weight=-1e-6)  
     joint_vel_l2 =        RewTerm(func=mdp.joint_vel_l2,     weight= -1.0e-5)
-    dof_acc_l2 =          RewTerm(func=mdp.joint_acc_l2,     weight=-2e-07)
+    dof_acc_l2 =          RewTerm(func=mdp.joint_acc_l2,     weight=-2e-07)    
+    dof_pos_limits =      RewTerm(func=mdp.joint_pos_limits, weight=-1.0)
+    '''
     
-    dof_pos_limits = RewTerm(func=mdp.joint_pos_limits, weight=-1.0)
-    
+    action_rate_l2 =      None
+    dof_torques_l2 =      None 
+    joint_vel_l2 =        None
+    dof_acc_l2 =          None 
+    dof_pos_limits =      None
+    '''
     
     velocity_profile_reward = RewTerm(
         func=velocity_profile_reward,
@@ -35,7 +41,9 @@ class Rewards(RewardsCfg):
             "asset_cfg": SceneEntityCfg("robot"),
             "ctrl_vel_command_name": "override_velocity",
             "target_command_name":  "target_joint_pose",
-            "kv":  0.5, # 1.0,
-            "kp":  0.5, #1.0,
+            "kv":  0.25, # 1.0,
+            "kp":  0.25, # 1.0,
+            "sign_deadband": 1e-2,
+            "k_in_position": 2.0, # additional reward for being inside of the deadband
         },
     )  

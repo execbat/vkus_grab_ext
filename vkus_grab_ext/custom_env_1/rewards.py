@@ -19,6 +19,7 @@ import isaaclab_tasks.manager_based.locomotion.velocity.mdp as mdp
 
 
 # Find ALL articulation data at isaaclab.assets.articulation.articulation_data.ArticulationData class
+
 def velocity_profile_reward(
     env,
     asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
@@ -26,89 +27,85 @@ def velocity_profile_reward(
     target_command_name: str = "target_joint_pose",
     kv: float = 1.0,
     kp: float = 1.0,
-    sign_deadband: float = 1e-3,   # tolerance for sign check near zero
-    
+    sign_deadband: float = 1e-2,
+    k_in_position: float = 2.0, # additional reward for being inside of the deadband
 ) -> torch.Tensor:
-    """
-    Reward: Currently, the velocity magnitude along the axes corresponds to the reference profile v_des(dist).
-    - distance is calculated in normalized coordinates [-1, 1]
-    - vel_etalon_norm depends on the override_velocity command in [0, 1]
-    - reward for each env = exp(-MSE / std_vel^2), where MSE is along all axes.
-    """
     asset: Articulation = env.scene[asset_cfg.name]
-    
-    # WORKING WITH AXIS POSITIONS
-    # normalization of joint position [-1,1]
-    q_act = asset.data.joint_pos                                       # [N.J]
+
+    # Index the selected joints
+    q_act = asset.data.joint_pos[:, asset_cfg.joint_ids]                       # [N, J]
     device, dtype = q_act.device, q_act.dtype
-    qmin   = asset.data.soft_joint_pos_limits[..., 0].to(device=device, dtype=dtype)
-    qmax   = asset.data.soft_joint_pos_limits[..., 1].to(device=device, dtype=dtype)
+    eps = 1e-6
+
+    # Joint position limits
+    qmin = asset.data.soft_joint_pos_limits[:, asset_cfg.joint_ids, 0].to(device=device, dtype=dtype)
+    qmax = asset.data.soft_joint_pos_limits[:, asset_cfg.joint_ids, 1].to(device=device, dtype=dtype)
+    rng = (qmax - qmin).clamp_min(eps)                                         # [N, J]
     offset = 0.5 * (qmin + qmax)
-    joint_act_norm   = 2.0 * (q_act - offset) / (qmax - qmin + 1e-6)                      # (N,J)
+
+    # Normalize positions to [-1, 1]
+    joint_act_norm = 2.0 * (q_act - offset) / rng
     joint_act_norm = torch.clamp(joint_act_norm, -1.0, 1.0)
-        
-    # target joint pos by cmd
-    joint_target_norm = env.command_manager.get_command(target_command_name)  # [N]    
+
+    # Target joint positions (assumed already in [-1, 1]); ensure shape [N, J]
+    joint_target_norm = env.command_manager.get_command(target_command_name)   # [N] or [N, J]
+    if joint_target_norm.dim() == 1:
+        joint_target_norm = joint_target_norm.unsqueeze(-1).expand_as(joint_act_norm)
+    else:
+        joint_target_norm = joint_target_norm[:, asset_cfg.joint_ids]
+
+    # Position error in normalized coordinates
+    pos_diff_norm = joint_target_norm - joint_act_norm                         # [N, J]
+
+    # Joint velocities and limits
+    joint_vel_act = asset.data.joint_vel[:, asset_cfg.joint_ids]               # [N, J]
+    joint_vel_limits = asset.data.joint_vel_limits[:, asset_cfg.joint_ids].to(device=device, dtype=dtype)
+    vlim = joint_vel_limits.abs().clamp_min(eps)
+
+    # Normalize velocities to [-1, 1]
+    joint_vel_act_norm = torch.clamp(joint_vel_act / vlim, -1.0, 1.0)
+
+    # === L2 weights (squared) ===
+    # Position weights ~ (range)^2, per-env normalized so max = 1
+    rng_max = rng.max(dim=-1, keepdim=True).values
+    axis_pos_weights = (rng / rng_max).pow(2)                                  # [N, J]
+
+    # Velocity weights ~ (v_max)^2, per-env normalized so max = 1
+    vlim_max = vlim.max(dim=-1, keepdim=True).values
+    axis_vel_weights = (vlim / vlim_max).pow(2)                                # [N, J]
+
+    # Global velocity regulation command per env
+    vel_regulation = env.command_manager.get_command(ctrl_vel_command_name)    # [N] or [N, 1]
+    if vel_regulation.dim() == 1:
+        vel_regulation = vel_regulation.unsqueeze(-1)
+    vel_regulation = vel_regulation.expand_as(pos_diff_norm)
+
+    # === Mask: "moving towards target" — compare position error sign with VELOCITY sign ===
+    same_sign = (torch.sign(pos_diff_norm) == torch.sign(joint_vel_act_norm))
+    near_zero = pos_diff_norm.abs() <= sign_deadband   # | (joint_vel_act_norm.abs() <= sign_deadband)
+    on_path_mask = (same_sign | near_zero).to(dtype=dtype)                     # [N, J]
     
     
-    # position difference
-    pos_diff_norm = joint_target_norm - joint_act_norm
+    in_position_reward = near_zero * k_in_position
     
-    # WORKING WITH AXIS VELOCITIES
-    joint_vel_act = asset.data.joint_vel[:, asset_cfg.joint_ids]
-    joint_vel_limits = asset.data.joint_vel_limits[:, asset_cfg.joint_ids]
-    joint_vel_act_norm = joint_vel_act / joint_vel_limits              # [-1; 1]
-    joint_vel_act_norm = torch.clamp(joint_vel_act_norm, -1.0, 1.0)
-    
-    vel_regulation = env.command_manager.get_command(ctrl_vel_command_name)     # [N]
-    
-    # REWARD ONLY FOR AXES WHICH MOVES TOWARDS THE TARGET
-    same_sign = (torch.sign(pos_diff_norm) == torch.sign(joint_act_norm))
-    near_zero = (pos_diff_norm.abs() <= sign_deadband) | (joint_act_norm.abs() <= sign_deadband)
-    on_path_mask = (same_sign | near_zero).to(dtype=dtype)
-    active_cnt = on_path_mask.sum(dim=-1).clamp_min(1.0) 
-    
-    
-    # Getting desired axis velocities based on pos_diff
-    vel_etalon_norm = torch.tanh(pos_diff_norm) * vel_regulation
-    
-    # CALC VEL DIFF REWARD
+
+    # Reference velocity (in normalized units)
+    vel_etalon_norm = torch.tanh(pos_diff_norm) * vel_regulation               # [N, J]
+
+    # --- Velocity reward (mask by direction, weight-average with velocity weights) ---
     joint_vel_diff_norm = vel_etalon_norm - joint_vel_act_norm
-    vel_axis_reward = torch.exp(- joint_vel_diff_norm**2 / kv**2) * on_path_mask   # axes who moves out from the target has reward 0                   
-    vel_reward = vel_axis_reward.sum(dim=-1) / active_cnt 
-    
-    # CALC POS DIFF REWARD
-    pos_axis_reward = torch.exp(- pos_diff_norm**2 / kp**2) * on_path_mask                             #.mean(dim=-1)
-    pos_reward = pos_axis_reward.sum(dim=-1) / active_cnt
-    
-    # OVERALL REWARD
-    overall_reward = vel_reward * pos_reward																									
-    
-    
-    
-    
-    '''
-    print('#####')
-    print(f'joint_target_norm {joint_target_norm}')
-    print(f'joint_act_norm {joint_act_norm}')
-    print(f'pos_diff_norm {pos_diff_norm}')
-    print()
-    print(f'vel_regulation {vel_regulation}')
-    print()    
-    print(f'joint_vel_act_norm {joint_vel_act_norm}')
-    print(f'vel_etalon_norm {vel_etalon_norm}')
-    print(f'joint_vel_diff_norm {joint_vel_diff_norm}')
-    print(f'vel_regulation {vel_regulation}')
-    print() 
-    print(f'vel_reward {vel_reward}')
-    print(f'pos_reward {pos_reward}')
-    print(f'overall_reward {overall_reward}')
-    print('#####')
-    '''
-    
-    
-   
+    vel_term = torch.exp(-(joint_vel_diff_norm ** 2) / (kv ** 2))              # [N, J]
+#    vel_num = (vel_term *  axis_vel_weights).sum(dim=-1)                       # [N]      # removed on_path_mask
+#    vel_den = axis_vel_weights.sum(dim=-1).clamp_min(eps)                      # [N]      # removed on_path_mask
+    vel_reward = vel_term.mean(dim=-1)  #vel_num / vel_den                                             # [0..1]
+
+    # --- Position reward (usually without mask: closeness to target always matters) ---
+    pos_term = torch.exp(-(pos_diff_norm ** 2) / (kp ** 2)) + in_position_reward                   # [N, J]
+#    pos_num = (pos_term * axis_pos_weights).sum(dim=-1)                        # [N]      # removed on_path_mask
+#    pos_den = axis_pos_weights.sum(dim=-1).clamp_min(eps)                      # [N]      # removed on_path_mask
+    pos_reward = pos_term.mean(dim=-1)  #pos_num / pos_den                                             # [0..1]
+
+    # Final reward
+    overall_reward = vel_reward + pos_reward
     return overall_reward
-
-
 

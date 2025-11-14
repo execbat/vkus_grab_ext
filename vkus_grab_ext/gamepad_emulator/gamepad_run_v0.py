@@ -34,7 +34,7 @@ JOINT_NAMES = [
 ]
 NUM_AXES = len(JOINT_NAMES)     # 9
 
-STREAM_INTERVAL_MS = 100        # send every 100 ms
+STREAM_INTERVAL_MS = 10        # send every 100 ms
 
 SLIDER_MIN, SLIDER_MAX = -1.0, 1.0    # axis targets in [-1, 1]
 SPEED_MIN,  SPEED_MAX  =  0.0, 1.0    # override speed in [0, 1]
