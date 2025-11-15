@@ -20,7 +20,7 @@ class Rewards(RewardsCfg):
     flat_orientation_l2 = None 
     lin_vel_z_l2 = None
     
-    action_rate_l2 =      RewTerm(func=mdp.action_rate_l2,   weight=-0.001) 
+    action_rate_l2 =      None # RewTerm(func=mdp.action_rate_l2,   weight=-0.001) 
     dof_torques_l2 =      RewTerm(func=mdp.joint_torques_l2, weight=-1e-5)  
     joint_vel_l2 =        RewTerm(func=mdp.joint_vel_l2,     weight= -1.0e-4)
     dof_acc_l2 =          RewTerm(func=mdp.joint_acc_l2,     weight=-2e-06)    
