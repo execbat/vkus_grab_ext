@@ -46,5 +46,6 @@ class Rewards(RewardsCfg):
             "sign_deadband": 0.005,
             "k_in_position": 2.0, # additional reward for being inside of the deadband
             "k_moving_away": 0.1, # additional penalty weight for going away from the target
+            "min_vel_threshold": 0.1 # if cmd vel is lower than this value, robot shouldn't move
         },
     )  

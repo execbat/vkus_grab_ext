@@ -30,6 +30,7 @@ def velocity_profile_reward(
     sign_deadband: float = 1e-2,
     k_in_position: float = 2.0, # additional reward weight for being inside of the deadband
     k_moving_away: float = 0.1, # additional penalty weight for going away from the target
+    min_vel_threshold: float = 0.1 # if cmd vel is lower thatn this value, robot shouldn't move
 ) -> torch.Tensor:
     asset: Articulation = env.scene[asset_cfg.name]
 
@@ -79,6 +80,10 @@ def velocity_profile_reward(
     vel_regulation = env.command_manager.get_command(ctrl_vel_command_name)    # [N] or [N, 1]
     if vel_regulation.dim() == 1:
         vel_regulation = vel_regulation.unsqueeze(-1)
+        
+    must_stand_still = (vel_regulation < min_vel_threshold) * -1.0 # envs, where robots shouldn't move
+    must_move = (vel_regulation >= min_vel_threshold) * 1.0       # envs, where robots should move
+        
     vel_regulation = vel_regulation.expand_as(pos_diff_norm)
 
     # === Mask: "moving towards target" — compare position error sign with VELOCITY sign ===
@@ -86,6 +91,7 @@ def velocity_profile_reward(
     diff_sign = (torch.sign(pos_diff_norm) != torch.sign(joint_vel_act_norm))
     near_zero = pos_diff_norm.abs() <= sign_deadband   # | (joint_vel_act_norm.abs() <= sign_deadband)
     on_path_mask = (same_sign | near_zero).to(dtype=dtype)                     # [N, J]
+    
     
     
     in_position_reward = near_zero * k_in_position
@@ -100,15 +106,18 @@ def velocity_profile_reward(
     vel_term = torch.exp(-(joint_vel_diff_norm ** 2) / (kv ** 2)) # * moving_away_penalty             # [N, J]
 #    vel_num = (vel_term *  axis_vel_weights).sum(dim=-1)                       # [N]      # removed on_path_mask
 #    vel_den = axis_vel_weights.sum(dim=-1).clamp_min(eps)                      # [N]      # removed on_path_mask
+    
     vel_reward = vel_term.mean(dim=-1)  #vel_num / vel_den                                             # [0..1]
+    #vel_penalty = (joint_vel_act_norm.abs() * must_stand_still).mean(dim=-1) * 0.1
+    
 
     # --- Position reward (usually without mask: closeness to target always matters) ---
-    pos_term = torch.exp(-(pos_diff_norm ** 2) / (kp ** 2)) + in_position_reward                   # [N, J]
+#    pos_term = torch.exp(-(pos_diff_norm ** 2) / (kp ** 2)) + in_position_reward                   # [N, J]
 #    pos_num = (pos_term * axis_pos_weights).sum(dim=-1)                        # [N]      # removed on_path_mask
 #    pos_den = axis_pos_weights.sum(dim=-1).clamp_min(eps)                      # [N]      # removed on_path_mask
-    pos_reward = pos_term.mean(dim=-1)  #pos_num / pos_den                                             # [0..1]
+#    pos_reward = pos_term.mean(dim=-1)  #pos_num / pos_den                                             # [0..1]
 
     # Final reward
-    overall_reward = vel_reward # + pos_reward
+    overall_reward = vel_reward #+ vel_penalty    # + pos_reward
     return overall_reward
 
