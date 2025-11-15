@@ -12,27 +12,7 @@ class CurriculumCfg:
     terrain_levels = CurrTerm(func=mdp.terrain_levels_vel)
     
     '''
-    # WEIGHT SCALAR RAPID CHANGERS  
-    ar_50k = CurrTerm(func=mdp.modify_reward_weight,
-        params={"term_name":"action_rate_l2","weight":-0.02,"num_steps":50_000})
-    tq_50k = CurrTerm(func=mdp.modify_reward_weight,
-        params={"term_name":"dof_torques_l2","weight":-3e-5,"num_steps":50_000})
-    jv_50k = CurrTerm(func=mdp.modify_reward_weight,
-        params={"term_name":"joint_vel_l2","weight":-1e-4,"num_steps":50_000})
-    ja_50k = CurrTerm(func=mdp.modify_reward_weight,
-        params={"term_name":"dof_acc_l2","weight":-1e-6,"num_steps":50_000})    
-        
 
-    ar_100k = CurrTerm(func=mdp.modify_reward_weight,
-        params={"term_name":"action_rate_l2","weight":-0.2,"num_steps":100_000})
-    tq_100k = CurrTerm(func=mdp.modify_reward_weight,
-        params={"term_name":"dof_torques_l2","weight":-3e-4,"num_steps":100_000})
-    jv_100k = CurrTerm(func=mdp.modify_reward_weight,
-        params={"term_name":"joint_vel_l2","weight":-1e-3,"num_steps":100_000})
-    ja_100k = CurrTerm(func=mdp.modify_reward_weight,
-        params={"term_name":"dof_acc_l2","weight":-1e-5,"num_steps":100_000})         
-        
-    '''
     # WEIGHT SCALAR SMOOTH CHANGERS    
     overshoot_penalty_curriculum = CurrTerm(
         func=mdp.modify_term_cfg,
@@ -48,24 +28,9 @@ class CurriculumCfg:
                             },
         },
     )
-    '''
-    tr_yaw_warmup = CurrTerm(
-        func=mdp.modify_term_cfg,
-        params={
-            "address": "rewards.track_ang_vel_z_exp.weight", 
-            "modify_fn": lerp_scalar,          
-            "modify_params": {
-                            "start": 0.0, 
-                            "end": 0.5, 
-                            "num_steps": 10_000, 
-                            "start_after": 1_000,
-                            "log_name": "track_ang_reward_weight"
-                            },
-        },
-    )
     
 
-    '''
+    
     # COMMAND RANGE SMOOTH CHANGERS 
     target_joint_pose_resample_time_range_curricilum = CurrTerm(
         func=mdp.modify_term_cfg,
@@ -97,4 +62,4 @@ class CurriculumCfg:
                             },
         },
     ) 
-    
+    '''

@@ -97,7 +97,7 @@ def velocity_profile_reward(
 
     # --- Velocity reward (mask by direction, weight-average with velocity weights) ---
     joint_vel_diff_norm = vel_etalon_norm - joint_vel_act_norm
-    vel_term = torch.exp(-(joint_vel_diff_norm ** 2) / (kv ** 2)) * moving_away_penalty             # [N, J]
+    vel_term = torch.exp(-(joint_vel_diff_norm ** 2) / (kv ** 2)) # * moving_away_penalty             # [N, J]
 #    vel_num = (vel_term *  axis_vel_weights).sum(dim=-1)                       # [N]      # removed on_path_mask
 #    vel_den = axis_vel_weights.sum(dim=-1).clamp_min(eps)                      # [N]      # removed on_path_mask
     vel_reward = vel_term.mean(dim=-1)  #vel_num / vel_den                                             # [0..1]
@@ -109,6 +109,6 @@ def velocity_profile_reward(
     pos_reward = pos_term.mean(dim=-1)  #pos_num / pos_den                                             # [0..1]
 
     # Final reward
-    overall_reward = vel_reward + pos_reward
+    overall_reward = vel_reward # + pos_reward
     return overall_reward
 
