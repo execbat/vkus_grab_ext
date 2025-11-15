@@ -112,12 +112,12 @@ def velocity_profile_reward(
     
 
     # --- Position reward (usually without mask: closeness to target always matters) ---
-#    pos_term = torch.exp(-(pos_diff_norm ** 2) / (kp ** 2)) + in_position_reward                   # [N, J]
+    pos_term = torch.exp(-(pos_diff_norm ** 2) / (kp ** 2))     # + in_position_reward                   # [N, J]
 #    pos_num = (pos_term * axis_pos_weights).sum(dim=-1)                        # [N]      # removed on_path_mask
 #    pos_den = axis_pos_weights.sum(dim=-1).clamp_min(eps)                      # [N]      # removed on_path_mask
-#    pos_reward = pos_term.mean(dim=-1)  #pos_num / pos_den                                             # [0..1]
+    pos_reward = pos_term.mean(dim=-1)  #pos_num / pos_den                                             # [0..1]
 
     # Final reward
-    overall_reward = vel_reward #+ vel_penalty    # + pos_reward
+    overall_reward = vel_reward + pos_reward
     return overall_reward
 
