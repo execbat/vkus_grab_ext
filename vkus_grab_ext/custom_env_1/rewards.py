@@ -27,10 +27,6 @@ def velocity_profile_reward(
     target_command_name: str = "target_joint_pose",
     kv: float = 1.0,
     kp: float = 1.0,
-    sign_deadband: float = 1e-2,
-    k_in_position: float = 2.0, # additional reward weight for being inside of the deadband
-    k_moving_away: float = 0.1, # additional penalty weight for going away from the target
-    min_vel_threshold: float = 0.1 # if cmd vel is lower thatn this value, robot shouldn't move
 ) -> torch.Tensor:
     asset: Articulation = env.scene[asset_cfg.name]
 
@@ -70,57 +66,29 @@ def velocity_profile_reward(
     # === L2 weights (squared) ===
     # Position weights ~ (range)^2, per-env normalized so max = 1
     rng_max = rng.max(dim=-1, keepdim=True).values
-    axis_pos_weights = (rng / rng_max).pow(2)                                  # [N, J]
+    axis_pos_weights = (rng / rng_max).pow(2)                                         # [N, J]
 
     # Velocity weights ~ (v_max)^2, per-env normalized so max = 1
-    vlim_max = vlim.max(dim=-1, keepdim=True).values
-    axis_vel_weights = (vlim / vlim_max).pow(2)                                # [N, J]
+#    vlim_max = vlim.max(dim=-1, keepdim=True).values
+#    axis_vel_weights = (vlim / vlim_max).pow(2)                                      # [N, J]
 
     # Global velocity regulation command per env
-    vel_regulation = env.command_manager.get_command(ctrl_vel_command_name)    # [N] or [N, 1]
+    vel_regulation = env.command_manager.get_command(ctrl_vel_command_name)           # [N] or [N, 1]
     if vel_regulation.dim() == 1:
-        vel_regulation = vel_regulation.unsqueeze(-1)
-        
-    must_stand_still = (vel_regulation < min_vel_threshold) * -1.0 # envs, where robots shouldn't move
-    must_move = (vel_regulation >= min_vel_threshold) * 1.0       # envs, where robots should move
-        
+        vel_regulation = vel_regulation.unsqueeze(-1)           
     vel_regulation = vel_regulation.expand_as(pos_diff_norm)
 
-    # === Mask: "moving towards target" — compare position error sign with VELOCITY sign ===
-    same_sign = (torch.sign(pos_diff_norm) == torch.sign(joint_vel_act_norm))
-    diff_sign = (torch.sign(pos_diff_norm) != torch.sign(joint_vel_act_norm))
-    near_zero = pos_diff_norm.abs() <= sign_deadband   # | (joint_vel_act_norm.abs() <= sign_deadband)
-    on_path_mask = (same_sign | near_zero).to(dtype=dtype)                     # [N, J]
-    
-    
-    
-    in_position_reward = near_zero * k_in_position
-    moving_away_penalty = diff_sign * -1 * k_moving_away + same_sign * 1
-    
-
     # Reference velocity (in normalized units)
-    vel_etalon_norm = torch.tanh(pos_diff_norm) * vel_regulation               # [N, J]
+    vel_etalon_norm = torch.tanh(pos_diff_norm) * vel_regulation                      # [N, J]
 
     # --- Velocity reward (mask by direction, weight-average with velocity weights) ---
     joint_vel_diff_norm = vel_etalon_norm - joint_vel_act_norm
-    vel_term = torch.exp(-(joint_vel_diff_norm ** 2) / (kv ** 2)) # * moving_away_penalty             # [N, J]
-#    vel_term = (torch.exp(-(joint_vel_diff_norm** 2) / (kv ** 2)) ) * axis_vel_weights
-#    vel_num = (vel_term *  axis_vel_weights).sum(dim=-1)                       # [N]      # removed on_path_mask
-#    vel_den = axis_vel_weights.sum(dim=-1).clamp_min(eps)                      # [N]      # removed on_path_mask
-    
-    #vel_reward = vel_term.mean(dim=-1)  #vel_num / vel_den                              # good case  
-    vel_reward = torch.exp(torch.mean(torch.log(vel_term.clamp_min(1e-12)), dim=-1))                                        # [0..1]
-    
-    
+    vel_term = torch.exp(-(joint_vel_diff_norm ** 2) / (kv ** 2)) #                   # [N, J]
+    vel_reward = torch.exp(torch.mean(torch.log(vel_term.clamp_min(1e-12)), dim=-1))  # if one of the axis berforms bad, then entire result is bad                                       # [0..1]
 
     # --- Position reward (usually without mask: closeness to target always matters) ---
-#    pos_term = torch.exp(-(pos_diff_norm ** 2) / (kp ** 2))     # + in_position_reward                   # [N, J]
-    pos_term = (torch.exp(-(pos_diff_norm** 2) / (kp ** 2)) ) * axis_pos_weights   # correction of axis importance based on different axis range limits
-#    pos_num = (pos_term * axis_pos_weights).sum(dim=-1)                        # [N]      # removed on_path_mask
-#    pos_den = axis_pos_weights.sum(dim=-1).clamp_min(eps)                      # [N]      # removed on_path_mask
-
-#    pos_reward = pos_term.mean(dim=-1)  # good case            
-    pos_reward = torch.exp(torch.mean(torch.log(pos_term.clamp_min(1e-12)), dim=-1))                                         # [0..1]
+    pos_term = (torch.exp(-(pos_diff_norm** 2) / (kp ** 2)) ) * axis_pos_weights      # correction of axis importance based on different axis range limits          
+    pos_reward = torch.exp(torch.mean(torch.log(pos_term.clamp_min(1e-12)), dim=-1))  # if one of the axis berforms bad, then entire result is bad
 
     # Final reward
     overall_reward = vel_reward * pos_reward
