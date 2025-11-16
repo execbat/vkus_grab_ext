@@ -118,6 +118,6 @@ def velocity_profile_reward(
     pos_reward = pos_term.mean(dim=-1)  #pos_num / pos_den                                             # [0..1]
 
     # Final reward
-    overall_reward = vel_reward + pos_reward
+    overall_reward = vel_reward * pos_reward
     return overall_reward
 
