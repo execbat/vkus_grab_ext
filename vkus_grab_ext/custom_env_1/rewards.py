@@ -103,13 +103,14 @@ def velocity_profile_reward(
 
     # --- Velocity reward (mask by direction, weight-average with velocity weights) ---
     joint_vel_diff_norm = vel_etalon_norm - joint_vel_act_norm
-#    vel_term = torch.exp(-(joint_vel_diff_norm ** 2) / (kv ** 2)) # * moving_away_penalty             # [N, J]
-    vel_term = (torch.exp(-(joint_vel_diff_norm** 2) / (kv ** 2)) ) * axis_vel_weights
+    vel_term = torch.exp(-(joint_vel_diff_norm ** 2) / (kv ** 2)) # * moving_away_penalty             # [N, J]
+#    vel_term = (torch.exp(-(joint_vel_diff_norm** 2) / (kv ** 2)) ) * axis_vel_weights
 #    vel_num = (vel_term *  axis_vel_weights).sum(dim=-1)                       # [N]      # removed on_path_mask
 #    vel_den = axis_vel_weights.sum(dim=-1).clamp_min(eps)                      # [N]      # removed on_path_mask
     
-    vel_reward = vel_term.mean(dim=-1)  #vel_num / vel_den                                             # [0..1]
-    #vel_penalty = (joint_vel_act_norm.abs() * must_stand_still).mean(dim=-1) * 0.1
+    #vel_reward = vel_term.mean(dim=-1)  #vel_num / vel_den                              # good case  
+    vel_reward = torch.exp(torch.mean(torch.log(vel_term.clamp_min(1e-12)), dim=-1))                                        # [0..1]
+    
     
 
     # --- Position reward (usually without mask: closeness to target always matters) ---
@@ -117,7 +118,9 @@ def velocity_profile_reward(
     pos_term = (torch.exp(-(pos_diff_norm** 2) / (kp ** 2)) ) * axis_pos_weights   # correction of axis importance based on different axis range limits
 #    pos_num = (pos_term * axis_pos_weights).sum(dim=-1)                        # [N]      # removed on_path_mask
 #    pos_den = axis_pos_weights.sum(dim=-1).clamp_min(eps)                      # [N]      # removed on_path_mask
-    pos_reward = pos_term.mean(dim=-1)  #pos_num / pos_den                                             # [0..1]
+
+#    pos_reward = pos_term.mean(dim=-1)  # good case            
+    pos_reward = torch.exp(torch.mean(torch.log(pos_term.clamp_min(1e-12)), dim=-1))                                         # [0..1]
 
     # Final reward
     overall_reward = vel_reward * pos_reward
