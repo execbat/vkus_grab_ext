@@ -88,6 +88,11 @@ scripts/*.tmp
 # -----------------------------
 # .nvidia-omniverse/
 # .local/share/ov/
+
+
 # .cache/ov/
 # .cache/nvidia/GLCache/
 # .nv/ComputeCache/
+
+# Dirs with robots
+vkus_grab_ext/robot

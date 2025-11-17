@@ -107,4 +107,14 @@ gym.register(
     },
 )
 
-
+# TRAINING MAIN POLICY ENV
+gym.register(
+    id="Vkus_Ext-Main-Task-Policy-Train-v1",
+    entry_point="isaaclab.envs:ManagerBasedRLEnv",
+    disable_env_checker=True,
+    kwargs={
+        "env_cfg_entry_point": f"vkus_grab_ext.custom_env_2.env_2_cfg:MainTaskEnvCfg",
+        "rsl_rl_cfg_entry_point": f"vkus_grab_ext.agents.rsl_rl_ppo_cfg:MainTaskRunnerCfg",
+        #                                                         "skrl_cfg_entry_point": f"{agents.__name__}:skrl_rough_ppo_cfg.yaml",
+    },
+)
