@@ -38,10 +38,10 @@ class CommandsCfg:
         heading_command=True,
         heading_control_stiffness=0.5,
         debug_vis=True,
-        dim = 9,
-        ranges=((-1.0, 1.0),) * 9,        
+        dim = 6,
+        ranges=((-1.0, 1.0),) * 6,        
     )
-    
+    ''''
     override_velocity = UniformVectorCommandCfg(
         asset_name="robot",
         resampling_time_range=(10.0, 10.0),
@@ -53,7 +53,7 @@ class CommandsCfg:
         dim = 1,
         ranges=((0.0, 1.0),) * 1,       
     )
-    '''
+   
     dof_mask = BernoulliMaskCommandCfg(
         asset_name="robot",
         resampling_time_range=(10.0, 10.0),
@@ -77,8 +77,8 @@ class TeleopCommandsCfg:
         class_type=UdpTargetJointPoseCommand,
         asset_name="robot",
         resampling_time_range=(1e9, 1e9),
-        dim=9,
-        ranges=((-1.0, 1.0),) * 9,
+        dim=6,
+        ranges=((-1.0, 1.0),) * 6,
         default=0.0,
         ip="0.0.0.0",
         port=55001,            
@@ -86,7 +86,7 @@ class TeleopCommandsCfg:
         struct_fmt="<10f",    
         debug_vis=False,
     )
-
+    '''
     override_velocity = UdpOverrideVelocityCommandCfg(
         class_type=UdpOverrideVelocityCommand,
         asset_name="robot",
@@ -100,5 +100,5 @@ class TeleopCommandsCfg:
         struct_fmt="<10f",
         debug_vis=False,
     )
- 
+    '''
 

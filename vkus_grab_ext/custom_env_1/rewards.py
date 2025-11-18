@@ -23,7 +23,7 @@ import isaaclab_tasks.manager_based.locomotion.velocity.mdp as mdp
 def velocity_profile_reward(
     env,
     asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
-    ctrl_vel_command_name: str = "override_velocity",
+    #ctrl_vel_command_name: str = "override_velocity",
     target_command_name: str = "target_joint_pose",
     kv: float = 1.0,
     kp: float = 1.0,
@@ -72,14 +72,17 @@ def velocity_profile_reward(
 #    vlim_max = vlim.max(dim=-1, keepdim=True).values
 #    axis_vel_weights = (vlim / vlim_max).pow(2)                                      # [N, J]
 
+    '''
     # Global velocity regulation command per env
     vel_regulation = env.command_manager.get_command(ctrl_vel_command_name)           # [N] or [N, 1]
     if vel_regulation.dim() == 1:
         vel_regulation = vel_regulation.unsqueeze(-1)           
     vel_regulation = vel_regulation.expand_as(pos_diff_norm)
-
+    '''
+    
     # Reference velocity (in normalized units)
-    vel_etalon_norm = torch.tanh(pos_diff_norm) * vel_regulation                      # [N, J]
+    # vel_etalon_norm = torch.tanh(pos_diff_norm) * vel_regulation                      # [N, J]
+    vel_etalon_norm = torch.tanh(pos_diff_norm) * 1.0                      # [N, J]
 
     # --- Velocity reward (mask by direction, weight-average with velocity weights) ---
     joint_vel_diff_norm = vel_etalon_norm - joint_vel_act_norm

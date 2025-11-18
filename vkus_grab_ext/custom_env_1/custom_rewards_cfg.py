@@ -14,7 +14,7 @@ class Rewards(RewardsCfg):
     track_ang_vel_z_exp = None
     
     feet_air_time = None
-    undesired_contacts = None
+    
     ang_vel_xy_l2 = None
     
     flat_orientation_l2 = None 
@@ -34,21 +34,21 @@ class Rewards(RewardsCfg):
     joint_vel_l2 =        RewTerm(func=mdp.joint_vel_l2,     weight= -1.0e-5)
     dof_acc_l2 =          RewTerm(func=mdp.joint_acc_l2,     weight=-2e-07)
     
-    '''
     
-    action_rate_l2 =      None
-    dof_torques_l2 =      None 
-    joint_vel_l2 =        None
-    dof_acc_l2 =          None 
-    dof_pos_limits =      None
-    '''
+    undesired_contacts = RewTerm(
+        func=mdp.undesired_contacts,	
+        weight=-0.5,
+        params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=["Link_.*"]),
+        "threshold": 1.0}
+    )
     
+
     velocity_profile_reward = RewTerm(
         func=velocity_profile_reward,
         weight=1.0,
         params={
             "asset_cfg": SceneEntityCfg("robot"),
-            "ctrl_vel_command_name": "override_velocity",
+            #"ctrl_vel_command_name": "override_velocity",
             "target_command_name":  "target_joint_pose",
             "kv":  1.0, # 1.0,
             "kp":  1.0,  # 1.0,
