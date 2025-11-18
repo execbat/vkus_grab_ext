@@ -62,11 +62,13 @@ vkus_grab_ext/
   - `Vkus_Ext-Isaac-Velocity-Flat-G1-v0` — standard velocity-tracking task.
   - `Vkus_Ext-Isaac-Velocity-Flat-G1-Play-v0` — play-mode for quick testing.
 
-- **Version 1 (with sensors):**
-  - `Vkus_Ext-Isaac-Velocity-Flat-G1-v1` — training environment for Middleware policy
-  - `Vkus_Ext-Isaac-Velocity-Flat-G1-Play-v1` — testing environment for Middleware policy
+- **Version 1:**
+  - `Vkus_Ext-Isaac-Velocity-Flat-G1-v1` — training environment for Middleware policy. Robot without gripper
+  - `Vkus_Ext-Isaac-Velocity-Flat-G1-Play-v1` — testing environment for Middleware policy. Robot without gripper
 
-
+- **Version 2:**
+  - `Vkus_Ext-Isaac-Velocity-Flat-G1-v2` — training environment for Middleware policy. Robot with 2-finger gripper
+  - `Vkus_Ext-Isaac-Velocity-Flat-G1-Play-v2` — testing environment for Middleware policy. Robot with 2-finger gripper
 
 
 ## Launch TensorBoard
@@ -100,7 +102,7 @@ vkus_grab_ext.scripts.run_play_with_ext \
 
 
 
-### Training — **Version 1 training the Middleware policy**
+### Training — **Version 1 training the Middleware policy. Robot without gripper**
 ```bash
 ./isaaclab.sh -p -m\
 vkus_grab_ext.scripts.run_train_with_ext \
@@ -110,7 +112,7 @@ vkus_grab_ext.scripts.run_train_with_ext \
 --headless
 ```
 
-### Play/Testing — **Version 1 testing the Middleware policy**
+### Play/Testing — **Version 1 testing the Middleware policy. Robot without gripper**
 ```bash
 ./isaaclab.sh -p -m\
 vkus_grab_ext.scripts.run_play_with_ext \
