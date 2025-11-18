@@ -38,8 +38,8 @@ class CommandsCfg:
         heading_command=True,
         heading_control_stiffness=0.5,
         debug_vis=True,
-        dim = 6,
-        ranges=((-1.0, 1.0),) * 6,        
+        dim = 12,
+        ranges=((-1.0, 1.0),) * 12,        
     )
     ''''
     override_velocity = UniformVectorCommandCfg(
@@ -77,8 +77,8 @@ class TeleopCommandsCfg:
         class_type=UdpTargetJointPoseCommand,
         asset_name="robot",
         resampling_time_range=(1e9, 1e9),
-        dim=6,
-        ranges=((-1.0, 1.0),) * 6,
+        dim=12,
+        ranges=((-1.0, 1.0),) * 12,
         default=0.0,
         ip="0.0.0.0",
         port=55001,            

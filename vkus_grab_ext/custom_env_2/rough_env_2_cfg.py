@@ -17,8 +17,8 @@ from isaaclab.assets import RigidObjectCfg, RigidObjectCollectionCfg
 ##
 #from isaaclab_assets import G1_MINIMAL_CFG, MATH_G1_23DF_CFG  # isort: skip
 #from vkus_grab_ext.unitree_g1_23dof.asset_unitree_g1_23dof import MATH_G1_23DF_CFG
-from vkus_grab_ext.robot.franka import FRANKA_PANDA_CFG
-from vkus_grab_ext.robot.jaka_zu_12 import JAKA_ZU12_CFG, JAKA_ZU12_SIMPLE_GRIPPER_CFG
+from vkus_grab_ext.robot.franka import FRANKA_PANDA_CFG, FRANKA_ROBOTIQ_GRIPPER_CFG
+from vkus_grab_ext.robot.jaka_zu_12 import JAKA_ZU12_SIMPLE_GRIPPER_CFG
 from .custom_velocity_env_cfg import CustomLocomotionVelocityRoughEnvCfg
 from .objects import TARGET_MARKER, OBSTACLE_CYL
 
@@ -60,7 +60,7 @@ class G1RoughEnv2Cfg(CustomLocomotionVelocityRoughEnvCfg):
         super().__post_init__()
         # Scene
         
-        self.scene.robot = JAKA_ZU12_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
+        self.scene.robot = JAKA_ZU12_SIMPLE_GRIPPER_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
         
         
         self.episode_length_s = 40.0

@@ -125,6 +125,28 @@ vkus_grab_ext.scripts.run_play_with_ext \
 
 
 
+### Training — **Version 2 training the Middleware policy. Robot with 2-finger gripper**
+```bash
+./isaaclab.sh -p -m\
+vkus_grab_ext.scripts.run_train_with_ext \
+--task Vkus_Ext-Isaac-Velocity-Flat-G1-v1 \
+--num_envs 1 \
+--enable_cameras \
+--headless
+```
+
+### Play/Testing — **Version 2 testing the Middleware policy. Robot with 2-finger gripper**
+```bash
+./isaaclab.sh -p -m\
+vkus_grab_ext.scripts.run_play_with_ext \
+--task Vkus_Ext-Isaac-Velocity-Flat-G1-Play-v1 \
+--num_envs 1 \
+--enable_cameras \
+--checkpoint ./logs/rsl_rl/vkus_experiment/<experiment folder name (contains date-time)>/<model_name>.pt \
+--rendering_mode performance
+```
+
+
 
 ```
 https://www.linkedin.com/in/evgenii-dushkin/
