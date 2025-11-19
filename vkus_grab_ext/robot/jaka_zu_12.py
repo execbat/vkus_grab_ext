@@ -186,9 +186,6 @@ JAKA_ZU12_SIMPLE_GRIPPER_CFG.init_state.joint_pos = {
     "joint_5": -3.14159,
     "joint_6": 0.0,
     "finger_joint": 0.0,
-    ".*_inner_finger_joint": 0.0,
-    ".*_inner_finger_knuckle_joint": 0.0,
-    ".*_outer_.*_joint": 0.0,
 }
 JAKA_ZU12_SIMPLE_GRIPPER_CFG.init_state.pos = (0, 0, 1.5)
 JAKA_ZU12_SIMPLE_GRIPPER_CFG.actuators = {
@@ -279,22 +276,22 @@ JAKA_ZU12_SIMPLE_GRIPPER_CFG.actuators = {
         damping=0.02,
     ),
     
-    # enable the gripper to grasp in a parallel manner
-    "gripper_finger": ImplicitActuatorCfg(
-        joint_names_expr=[".*_inner_finger_joint"],
-        effort_limit_sim=50,
-        velocity_limit_sim=10.0,
-        stiffness=0.2,
-        damping=0.001,
-    ),
-    # set PD to zero for passive joints in close-loop gripper
-    "gripper_passive": ImplicitActuatorCfg(
-        joint_names_expr=[".*_inner_finger_knuckle_joint", "right_outer_knuckle_joint"],
-        effort_limit_sim=1.0,
-        velocity_limit_sim=10.0,
-        stiffness=0.0,
-        damping=0.0,
-    ),
+#    # enable the gripper to grasp in a parallel manner
+#    "gripper_finger": ImplicitActuatorCfg(
+#        joint_names_expr=[".*_inner_finger_joint"],
+#        effort_limit_sim=50,
+#        velocity_limit_sim=10.0,
+#        stiffness=0.2,
+#        damping=0.001,
+#    ),
+#    # set PD to zero for passive joints in close-loop gripper
+#    "gripper_passive": ImplicitActuatorCfg(
+#        joint_names_expr=[".*_inner_finger_knuckle_joint", "right_outer_knuckle_joint"],
+#        effort_limit_sim=1.0,
+#        velocity_limit_sim=10.0,
+#        stiffness=0.0,
+#        damping=0.0,
+#    ),
     
 }
 
