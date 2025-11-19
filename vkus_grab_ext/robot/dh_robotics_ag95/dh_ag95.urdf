@@ -1,0 +1,356 @@
+<?xml version="1.0"?>
+<robot name="dh_ag95_gripper">
+
+  <!-- ========== BASE ========== -->
+
+  <link name="ag95_base_link">
+    <inertial>
+      <origin xyz="7.892486664218268e-13 9.73814800116557e-05 0.0030311891257515876" rpy="0 0 0" />
+      <mass value="0.0533567490598" />
+      <inertia ixx="1.164910796e-05" ixy="0.0" ixz="-0.0"
+               iyy="3.5238551579e-05" iyz="0.0" izz="4.6013976442e-05" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/visual/base_link.stl"
+              scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="">
+        <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/collision/base_link.stl"
+              scale="0.001 0.001 0.001" />
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="ag95_body">
+    <inertial>
+      <origin xyz="0.040363309423792425 0.014263796342398428 0.04377145101823153" rpy="0 0 0" />
+      <mass value="0.780803250918" />
+      <inertia ixx="0.00112326523504" ixy="-8.73683097e-07" ixz="-2.621049291e-06"
+               iyy="0.00129974922064" iyz="-5.82455398e-07" izz="0.000454897665838" />
+    </inertial>
+    <visual>
+      <origin xyz="0.0405 0.0143 -0.0147" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/visual/gripper_body.stl"
+              scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="">
+        <color rgba="0.1 0.1 0.1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0.0405 0.0143 -0.0147" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/collision/gripper_body.stl"
+              scale="0.001 0.001 0.001" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="ag95_body_joint" type="fixed">
+    <origin xyz="-0.0405 -0.0143 0.0147" rpy="0 0 0" />
+    <parent link="ag95_base_link" />
+    <child  link="ag95_body" />
+  </joint>
+
+  <!-- удобный фрейм для планирования хватов -->
+  <link name="grasp_link"/>
+  <joint name="grasp_joint" type="fixed">
+    <!-- grasp_link_offset = 0.19, rpy = pi/2, -pi/2, 0 -->
+    <origin xyz="0.0 0.0 0.19" rpy="1.57079632679 -1.57079632679 0" />
+    <parent link="ag95_base_link" />
+    <child  link="grasp_link" />
+  </joint>
+
+  <!-- ========== LEFT FINGER LINKS ========== -->
+
+  <link name="left_outer_knuckle">
+    <inertial>
+      <origin xyz="0.027678515816713697 0.008750002359538555 -4.432690447753185e-07" rpy="0 0 0" />
+      <mass value="0.0589066057773107" />
+      <inertia ixx="1e-06" ixy="0.0" ixz="-0.0"
+               iyy="1.7e-05" iyz="0.0" izz="1.7e-05" />
+    </inertial>
+    <visual>
+      <origin xyz="-0.036673 0.00875 -0.098336" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/visual/outer_knuckle.stl"
+              scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="">
+        <color rgba="0.1 0.1 0.1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.036673 0.00875 -0.098336" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/collision/outer_knuckle.stl"
+              scale="0.001 0.001 0.001" />
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="left_inner_knuckle">
+    <inertial>
+      <origin xyz="-0.001773347637755853 0.025399999999162655 0.028950024725163018" rpy="0 0 0" />
+      <mass value="0.07116672022913799" />
+      <inertia ixx="3.7e-05" ixy="0.0" ixz="0.0"
+               iyy="1.7e-05" iyz="-0.0" izz="2.1e-05" />
+    </inertial>
+    <visual>
+      <origin xyz="-0.016 0.0254 -0.10586" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/visual/inner_knuckle.stl"
+              scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="">
+        <color rgba="0.1 0.1 0.1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.016 0.0254 -0.10586" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/collision/inner_knuckle.stl"
+              scale="0.001 0.001 0.001" />
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="left_finger">
+    <inertial>
+      <origin xyz="-0.013763205176003518 0.008750002316393751 0.007315452388518454" rpy="0 0 0" />
+      <mass value="0.035304126564626004" />
+      <inertia ixx="2e-06" ixy="0.0" ixz="1e-06"
+               iyy="4e-06" iyz="-0.0" izz="3e-06" />
+    </inertial>
+    <visual>
+      <origin xyz="-0.091673 0.00875 -0.098336" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/visual/finger.stl"
+              scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="">
+        <color rgba="0.1 0.1 0.1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.091673 0.00875 -0.098336" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/collision/finger.stl"
+              scale="0.001 0.001 0.001" />
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="left_finger_pad">
+    <inertial>
+      <origin xyz="-0.0022695421476374017 2.3166990085415594e-09 0.00779073905191241" rpy="0 0 0" />
+      <mass value="0.047823655444711066" />
+      <inertia ixx="5e-06" ixy="-0.0" ixz="0.0"
+               iyy="4e-06" iyz="0.0"  izz="2e-06" />
+    </inertial>
+    <visual>
+      <origin xyz="-0.0705 0 -0.12056" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/visual/finger_pad.stl"
+              scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="">
+        <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.0705 0 -0.12056" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/collision/finger_pad.stl"
+              scale="0.001 0.001 0.001" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- ========== RIGHT FINGER LINKS ========== -->
+
+  <link name="right_outer_knuckle">
+    <inertial>
+      <origin xyz="0.027678515816713697 0.008750002359538555 -4.432690447753185e-07" rpy="0 0 0" />
+      <mass value="0.0589066057773107" />
+      <inertia ixx="1e-06" ixy="0.0" ixz="-0.0"
+               iyy="1.7e-05" iyz="0.0" izz="1.7e-05" />
+    </inertial>
+    <visual>
+      <origin xyz="-0.036673 0.00875 -0.098336" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/visual/outer_knuckle.stl"
+              scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="">
+        <color rgba="0.1 0.1 0.1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.036673 0.00875 -0.098336" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/collision/outer_knuckle.stl"
+              scale="0.001 0.001 0.001" />
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="right_inner_knuckle">
+    <inertial>
+      <origin xyz="-0.001773347637755853 0.025399999999162655 0.028950024725163018" rpy="0 0 0" />
+      <mass value="0.07116672022913799" />
+      <inertia ixx="3.7e-05" ixy="0.0" ixz="0.0"
+               iyy="1.7e-05" iyz="-0.0" izz="2.1e-05" />
+    </inertial>
+    <visual>
+      <origin xyz="-0.016 0.0254 -0.10586" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/visual/inner_knuckle.stl"
+              scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="">
+        <color rgba="0.1 0.1 0.1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.016 0.0254 -0.10586" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/collision/inner_knuckle.stl"
+              scale="0.001 0.001 0.001" />
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="right_finger">
+    <inertial>
+      <origin xyz="-0.013763205176003518 0.008750002316393751 0.007315452388518454" rpy="0 0 0" />
+      <mass value="0.035304126564626004" />
+      <inertia ixx="2e-06" ixy="0.0" ixz="1e-06"
+               iyy="4e-06" iyz="-0.0" izz="3e-06" />
+    </inertial>
+    <visual>
+      <origin xyz="-0.091673 0.00875 -0.098336" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/visual/finger.stl"
+              scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="">
+        <color rgba="0.1 0.1 0.1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.091673 0.00875 -0.098336" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/collision/finger.stl"
+              scale="0.001 0.001 0.001" />
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="right_finger_pad">
+    <inertial>
+      <origin xyz="-0.0022695421476374017 2.3166990085415594e-09 0.00779073905191241" rpy="0 0 0" />
+      <mass value="0.047823655444711066" />
+      <inertia ixx="5e-06" ixy="-0.0" ixz="0.0"
+               iyy="4e-06" iyz="0.0" izz="2e-06" />
+    </inertial>
+    <visual>
+      <origin xyz="-0.0705 0 -0.12056" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/visual/finger_pad.stl"
+              scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="">
+        <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.0705 0 -0.12056" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/collision/finger_pad.stl"
+              scale="0.001 0.001 0.001" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- ========== JOINTS: LEFT SIDE ========== -->
+
+  <!-- основной приводной сустав -->
+  <joint name="left_outer_knuckle_joint" type="revolute">
+    <origin xyz="0.077173 0.00555 0.083636" rpy="0 -0.780005096009 0" />
+    <parent link="ag95_body" />
+    <child  link="left_outer_knuckle" />
+    <axis xyz="-0.0 -1.0 0.0" />
+    <limit lower="0.0" upper="0.93" effort="50.0" velocity="2.0" />
+  </joint>
+
+  <joint name="left_finger_joint" type="revolute">
+    <origin xyz="0.055 0.0 0.0" rpy="0 0.780005096009 0" />
+    <parent link="left_outer_knuckle" />
+    <child  link="left_finger" />
+    <axis xyz="0.0 1.0 -0.0" />
+    <limit lower="-0.01" upper="0.94" effort="50.0" velocity="2.0" />
+    <mimic joint="left_outer_knuckle_joint" multiplier="1" offset="0" />
+  </joint>
+
+  <joint name="left_inner_knuckle_joint" type="revolute">
+    <origin xyz="0.0565 -0.0111 0.09116" rpy="0 0.790791230786 0.0" />
+    <parent link="ag95_body" />
+    <child  link="left_inner_knuckle" />
+    <axis xyz="0.0 -1.0 -0.0" />
+    <limit lower="-0.01" upper="0.94" effort="50.0" velocity="2.0" />
+    <mimic joint="left_outer_knuckle_joint" multiplier="1" offset="0" />
+  </joint>
+
+  <joint name="left_inner_finger_pad_joint" type="fixed">
+    <origin xyz="-0.021173 0.00875 0.022224" rpy="0 0 0" />
+    <parent link="left_finger" />
+    <child  link="left_finger_pad" />
+  </joint>
+
+  <!-- ========== JOINTS: RIGHT SIDE ========== -->
+
+  <joint name="right_outer_knuckle_joint" type="revolute">
+    <origin xyz="0.003827 0.02305 0.083636" rpy="0 -0.780005096009 3.14159265359" />
+    <parent link="ag95_body" />
+    <child  link="right_outer_knuckle" />
+    <axis xyz="-0.0 -1.0 0.0" />
+    <limit lower="-0.01" upper="0.94" effort="50.0" velocity="2.0" />
+    <mimic joint="left_outer_knuckle_joint" multiplier="1" offset="0" />
+  </joint>
+
+  <joint name="right_finger_joint" type="revolute">
+    <origin xyz="0.055 0.0 0.0" rpy="0 0.780005096009 0" />
+    <parent link="right_outer_knuckle" />
+    <child  link="right_finger" />
+    <axis xyz="0.0 1.0 -0.0" />
+    <limit lower="-0.01" upper="0.94" effort="50.0" velocity="2.0" />
+    <mimic joint="left_outer_knuckle_joint" multiplier="1" offset="0" />
+  </joint>
+
+  <joint name="right_inner_knuckle_joint" type="revolute">
+    <origin xyz="0.0245 0.0397 0.09116" rpy="0 0.790791230786 -3.14159265359" />
+    <parent link="ag95_body" />
+    <child  link="right_inner_knuckle" />
+    <axis xyz="0.0 -1.0 -0.0" />
+    <limit lower="-0.01" upper="0.94" effort="50.0" velocity="2.0" />
+    <mimic joint="left_outer_knuckle_joint" multiplier="1" offset="0" />
+  </joint>
+
+  <joint name="right_inner_finger_pad_joint" type="fixed">
+    <origin xyz="-0.021173 0.00875 0.022224" rpy="0 0 0" />
+    <parent link="right_finger" />
+    <child  link="right_finger_pad" />
+  </joint>
+
+</robot>
+

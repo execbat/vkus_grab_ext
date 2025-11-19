@@ -129,7 +129,7 @@ vkus_grab_ext.scripts.run_play_with_ext \
 ```bash
 ./isaaclab.sh -p -m\
 vkus_grab_ext.scripts.run_train_with_ext \
---task Vkus_Ext-Isaac-Velocity-Flat-G1-v1 \
+--task Vkus_Ext-Isaac-Velocity-Flat-G1-v2 \
 --num_envs 1 \
 --enable_cameras \
 --headless
@@ -139,7 +139,29 @@ vkus_grab_ext.scripts.run_train_with_ext \
 ```bash
 ./isaaclab.sh -p -m\
 vkus_grab_ext.scripts.run_play_with_ext \
---task Vkus_Ext-Isaac-Velocity-Flat-G1-Play-v1 \
+--task Vkus_Ext-Isaac-Velocity-Flat-G1-Play-v2 \
+--num_envs 1 \
+--enable_cameras \
+--checkpoint ./logs/rsl_rl/vkus_experiment/<experiment folder name (contains date-time)>/<model_name>.pt \
+--rendering_mode performance
+```
+
+
+### Training — **Version 3 training the Middleware policy. Robot with another 2-finger gripper**
+```bash
+./isaaclab.sh -p -m\
+vkus_grab_ext.scripts.run_train_with_ext \
+--task Vkus_Ext-Isaac-Velocity-Flat-G1-v3 \
+--num_envs 1 \
+--enable_cameras \
+--headless
+```
+
+### Play/Testing — **Version 3 testing the Middleware policy. Robot with another 2-finger gripper**
+```bash
+./isaaclab.sh -p -m\
+vkus_grab_ext.scripts.run_play_with_ext \
+--task Vkus_Ext-Isaac-Velocity-Flat-G1-Play-v3 \
 --num_envs 1 \
 --enable_cameras \
 --checkpoint ./logs/rsl_rl/vkus_experiment/<experiment folder name (contains date-time)>/<model_name>.pt \

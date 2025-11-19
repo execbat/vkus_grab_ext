@@ -95,4 +95,4 @@ scripts/*.tmp
 # .nv/ComputeCache/
 
 # Dirs with robots
-vkus_grab_ext/robot
+# vkus_grab_ext/robot

@@ -27,14 +27,14 @@ JOINT_NAMES = [
     "joint_4",
     "joint_5",
     "joint_6",
-    "left_inner_knuckle_joint",
+#    "left_inner_knuckle_joint",
     "left_outer_knuckle_joint",
-    "left_finger_joint",
-    "right_inner_knuckle_joint",
-    "right_outer_knuckle_joint",
-    "right_finger_joint",
+#    "left_finger_joint",
+#    "right_inner_knuckle_joint",
+#    "right_outer_knuckle_joint",
+#    "right_finger_joint",
 ]
-NUM_AXES = len(JOINT_NAMES)     # 12
+NUM_AXES = len(JOINT_NAMES)     # 7
 
 STREAM_INTERVAL_MS = 2          # send every 2 ms
 

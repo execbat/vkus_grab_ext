@@ -21,7 +21,7 @@ class Rewards(RewardsCfg):
     lin_vel_z_l2 = None
     
     
-    dof_pos_limits =      RewTerm(func=mdp.joint_pos_limits, weight=-1.0)
+    dof_pos_limits =      RewTerm(func=mdp.joint_pos_limits, weight=-0.05)
     
     #action_rate_l2 =      RewTerm(func=mdp.action_rate_l2,   weight=-0.00001) 
     #dof_torques_l2 =      RewTerm(func=mdp.joint_torques_l2, weight=-1e-7)  
@@ -37,20 +37,31 @@ class Rewards(RewardsCfg):
     
     undesired_contacts = RewTerm(
         func=mdp.undesired_contacts,	
-        weight=-0.1,
+        weight=-0.05,
         params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=["Link_.*"]), # ".*_inner_knuckle", ".*_outer_knuckle"]),
         "threshold": 1.0}
     )
     
 
-#    velocity_profile_reward = RewTerm(
-#        func=velocity_profile_reward,
-#        weight=1.0,
-#        params={
-#            "asset_cfg": SceneEntityCfg("robot"),
-#            #"ctrl_vel_command_name": "override_velocity",
-#            "target_command_name":  "target_joint_pose",
-#            "kv":  1.0, # 1.0,
-#            "kp":  1.0,  # 1.0,
-#        },
-#    )  
+    velocity_profile_reward = RewTerm(
+        func=velocity_profile_reward,
+        weight=1.0,
+        params={
+            "asset_cfg": SceneEntityCfg(
+                    name="robot",
+                    joint_names=[
+                        "joint_1",
+                        "joint_2",
+                        "joint_3",
+                        "joint_4",
+                        "joint_5",
+                        "joint_6",
+                        "left_outer_knuckle_joint", 
+                    ],
+            ),
+            #"ctrl_vel_command_name": "override_velocity",
+            "target_command_name":  "target_joint_pose",
+            "kv":  1.0, # 1.0,
+            "kp":  1.0,  # 1.0,
+        },
+    )  

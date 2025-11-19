@@ -22,22 +22,27 @@ import isaaclab_tasks.manager_based.locomotion.velocity.mdp as mdp
 
 def velocity_profile_reward(
     env,
-    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
+    asset_cfg: SceneEntityCfg = SceneEntityCfg(name="robot", joint_names=[".*"]),
     #ctrl_vel_command_name: str = "override_velocity",
     target_command_name: str = "target_joint_pose",
     kv: float = 1.0,
     kp: float = 1.0,
 ) -> torch.Tensor:
     asset: Articulation = env.scene[asset_cfg.name]
+    
+    # extract joint ID's 
+    joint_ids = asset_cfg.joint_ids
 
     # Index the selected joints
-    q_act = asset.data.joint_pos[:, asset_cfg.joint_ids]                       # [N, J]
+    q_act = asset.data.joint_pos[:, joint_ids]                       # [N, J]
+    
     device, dtype = q_act.device, q_act.dtype
     eps = 1e-6
 
     # Joint position limits
-    qmin = asset.data.soft_joint_pos_limits[:, asset_cfg.joint_ids, 0].to(device=device, dtype=dtype)
-    qmax = asset.data.soft_joint_pos_limits[:, asset_cfg.joint_ids, 1].to(device=device, dtype=dtype)
+    qmin = asset.data.soft_joint_pos_limits[:, joint_ids, 0].to(device=device, dtype=dtype)
+    qmax = asset.data.soft_joint_pos_limits[:, joint_ids, 1].to(device=device, dtype=dtype)
+    
     rng = (qmax - qmin).clamp_min(eps)                                         # [N, J]
     offset = 0.5 * (qmin + qmax)
 
@@ -47,17 +52,15 @@ def velocity_profile_reward(
 
     # Target joint positions (assumed already in [-1, 1]); ensure shape [N, J]
     joint_target_norm = env.command_manager.get_command(target_command_name)   # [N] or [N, J]
-    if joint_target_norm.dim() == 1:
-        joint_target_norm = joint_target_norm.unsqueeze(-1).expand_as(joint_act_norm)
-    else:
-        joint_target_norm = joint_target_norm[:, asset_cfg.joint_ids]
 
     # Position error in normalized coordinates
     pos_diff_norm = joint_target_norm - joint_act_norm                         # [N, J]
 
     # Joint velocities and limits
-    joint_vel_act = asset.data.joint_vel[:, asset_cfg.joint_ids]               # [N, J]
-    joint_vel_limits = asset.data.joint_vel_limits[:, asset_cfg.joint_ids].to(device=device, dtype=dtype)
+    joint_vel_act = asset.data.joint_vel[:, joint_ids]               # [N, J]
+    
+    joint_vel_limits = asset.data.joint_vel_limits[:, joint_ids].to(device=device, dtype=dtype)
+    
     vlim = joint_vel_limits.abs().clamp_min(eps)
 
     # Normalize velocities to [-1, 1]
@@ -67,19 +70,7 @@ def velocity_profile_reward(
     # Position weights ~ (range)^2, per-env normalized so max = 1
     rng_max = rng.max(dim=-1, keepdim=True).values
     axis_pos_weights = (rng / rng_max).pow(2)                                         # [N, J]
-
-    # Velocity weights ~ (v_max)^2, per-env normalized so max = 1
-#    vlim_max = vlim.max(dim=-1, keepdim=True).values
-#    axis_vel_weights = (vlim / vlim_max).pow(2)                                      # [N, J]
-
-    '''
-    # Global velocity regulation command per env
-    vel_regulation = env.command_manager.get_command(ctrl_vel_command_name)           # [N] or [N, 1]
-    if vel_regulation.dim() == 1:
-        vel_regulation = vel_regulation.unsqueeze(-1)           
-    vel_regulation = vel_regulation.expand_as(pos_diff_norm)
-    '''
-    
+   
     # Reference velocity (in normalized units)
     # vel_etalon_norm = torch.tanh(pos_diff_norm) * vel_regulation                      # [N, J]
     vel_etalon_norm = torch.tanh(pos_diff_norm) * 1.0                      # [N, J]
