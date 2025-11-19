@@ -156,6 +156,54 @@ gym.register(
     },
 )
 
+# TRAINING MIDDLEWARE POLICY ENV 3 - robot with AG95 160 Dobot gripper 2 Finger
+
+gym.register(
+    id="Vkus_Ext-Isaac-Velocity-Rough-G1-v3",
+    entry_point="isaaclab.envs:ManagerBasedRLEnv",
+    disable_env_checker=True,
+    kwargs={
+        "env_cfg_entry_point": f"vkus_grab_ext.custom_env_3.rough_env_3_cfg:G1RoughEnv3Cfg",
+        "rsl_rl_cfg_entry_point": f"vkus_grab_ext.agents.rsl_rl_ppo_cfg:G1RoughPPORunnerCfg",
+        "skrl_cfg_entry_point": f"{agents.__name__}:skrl_rough_ppo_cfg.yaml",
+    },
+)
+
+
+gym.register(
+    id="Vkus_Ext-Isaac-Velocity-Rough-G1-Play-v3",
+    entry_point="isaaclab.envs:ManagerBasedRLEnv",
+    disable_env_checker=True,
+    kwargs={
+        "env_cfg_entry_point": f"vkus_grab_ext.custom_env_3.rough_env_3_cfg:G1RoughEnv3Cfg_PLAY",
+        "rsl_rl_cfg_entry_point": f"vkus_grab_ext.agents.rsl_rl_ppo_cfg:G1RoughPPORunnerCfg",
+        "skrl_cfg_entry_point": f"{agents.__name__}:skrl_rough_ppo_cfg.yaml",
+    },
+)
+
+
+gym.register(
+    id="Vkus_Ext-Isaac-Velocity-Flat-G1-v3",
+    entry_point="isaaclab.envs:ManagerBasedRLEnv",
+    disable_env_checker=True,
+    kwargs={
+        "env_cfg_entry_point": f"vkus_grab_ext.custom_env_3.flat_env_3_cfg:G1FlatEnv3Cfg",
+        "rsl_rl_cfg_entry_point": f"vkus_grab_ext.agents.rsl_rl_ppo_cfg:G1FlatPPORunnerCfg",
+        "skrl_cfg_entry_point": f"{agents.__name__}:skrl_flat_ppo_cfg.yaml",
+    },
+)
+
+
+gym.register(
+    id="Vkus_Ext-Isaac-Velocity-Flat-G1-Play-v3",
+    entry_point="isaaclab.envs:ManagerBasedRLEnv",
+    disable_env_checker=True,
+    kwargs={
+        "env_cfg_entry_point": f"vkus_grab_ext.custom_env_3.flat_env_3_cfg:G1FlatEnv3Cfg_PLAY",
+        "rsl_rl_cfg_entry_point": f"vkus_grab_ext.agents.rsl_rl_ppo_cfg:G1FlatPPORunnerCfg",
+        "skrl_cfg_entry_point": f"{agents.__name__}:skrl_flat_ppo_cfg.yaml",
+    },
+)
 
 
 # TRAINING MAIN POLICY ENV
