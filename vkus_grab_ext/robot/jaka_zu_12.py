@@ -156,7 +156,7 @@ usd_path_simple_gripper = os.path.join(
     pkg_dir,
     "robot",
     "jaka_usd",
-    "jaka_zu12_with_gripper.usd",
+    "jaka_zu12_with_gripper_coll_solved.usd",
 )
 
 JAKA_ZU12_SIMPLE_GRIPPER_CFG = ArticulationCfg(
