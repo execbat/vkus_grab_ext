@@ -156,7 +156,7 @@ usd_path_simple_gripper = os.path.join(
     pkg_dir,
     "robot",
     "jaka_usd",
-    "jaka_zu12_with_gripper_coll_disabled.usd",
+    "jaka_zu12_with_gripper_coll_solved.usd",
 )
 
 JAKA_ZU12_SIMPLE_GRIPPER_CFG = ArticulationCfg(
@@ -273,27 +273,33 @@ JAKA_ZU12_SIMPLE_GRIPPER_CFG.actuators = {
         
     "gripper_drive": ImplicitActuatorCfg(
         joint_names_expr=["finger_joint"],  # "right_outer_knuckle_joint" is its mimic joint
-        effort_limit_sim=1650,
-        velocity_limit_sim=10.0,
-        stiffness=17,
-        damping=0.02,
+        velocity_limit=146.46001,
+        effort_limit_sim=26.0,
+        #velocity_limit_sim=10.0,
+        stiffness=3.0,
+        damping=0.0002,
+        armature=0.0001,
     ),
     
     # enable the gripper to grasp in a parallel manner
     "gripper_finger": ImplicitActuatorCfg(
         joint_names_expr=[".*_inner_finger_joint"],
-        effort_limit_sim=50,
-        velocity_limit_sim=10.0,
-        stiffness=0.2,
-        damping=0.001,
+        velocity_limit=10000.0,
+        effort_limit_sim=0.0,
+        #velocity_limit_sim=0.0,
+        stiffness=0.0,
+        damping=0.0,
+        armature=0.0001,
     ),
     # set PD to zero for passive joints in close-loop gripper
     "gripper_passive": ImplicitActuatorCfg(
         joint_names_expr=[".*_inner_finger_knuckle_joint", "right_outer_knuckle_joint"],
-        effort_limit_sim=1.0,
-        velocity_limit_sim=10.0,
+        velocity_limit=10000.0,
+        effort_limit_sim=0.0,
+        #velocity_limit_sim=0.0,
         stiffness=0.0,
         damping=0.0,
+        armature=0.0001,
     ),
     
 }
