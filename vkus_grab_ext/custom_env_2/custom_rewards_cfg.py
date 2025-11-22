@@ -45,7 +45,7 @@ class Rewards(RewardsCfg):
 
     velocity_profile_reward = RewTerm(
         func=velocity_profile_reward,
-        weight=10.0,
+        weight=1.0,
         params={
             "asset_cfg": SceneEntityCfg(
                     name="robot",

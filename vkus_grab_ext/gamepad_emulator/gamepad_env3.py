@@ -28,7 +28,7 @@ JOINT_NAMES = [
     "joint_5",
     "joint_6",
 #    "left_inner_knuckle_joint",
-    "left_outer_knuckle_joint",
+    "gripper",
 #    "left_finger_joint",
 #    "right_inner_knuckle_joint",
 #    "right_outer_knuckle_joint",

@@ -90,9 +90,11 @@ scripts/*.tmp
 # .local/share/ov/
 
 
+
 # .cache/ov/
 # .cache/nvidia/GLCache/
 # .nv/ComputeCache/
 
 # Dirs with robots
 # vkus_grab_ext/robot
+# vkus_grab_ext/items

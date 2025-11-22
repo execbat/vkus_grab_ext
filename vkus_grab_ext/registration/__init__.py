@@ -156,6 +156,57 @@ gym.register(
     },
 )
 
+# !!!DEMO!!! TRAINING MIDDLEWARE POLICY ENV 2 - robot with simple 2 finger gripper
+
+gym.register(
+    id="Vkus_Ext-Isaac-Velocity-Rough-G1-v2-demo",
+    entry_point="isaaclab.envs:ManagerBasedRLEnv",
+    disable_env_checker=True,
+    kwargs={
+        "env_cfg_entry_point": f"vkus_grab_ext.custom_env_2_demo.rough_env_2_demo_cfg:G1RoughEnv2_demo_Cfg",
+        "rsl_rl_cfg_entry_point": f"vkus_grab_ext.agents.rsl_rl_ppo_cfg:G1RoughPPORunnerCfg",
+        "skrl_cfg_entry_point": f"{agents.__name__}:skrl_rough_ppo_cfg.yaml",
+    },
+)
+
+
+gym.register(
+    id="Vkus_Ext-Isaac-Velocity-Rough-G1-Play-v2-demo",
+    entry_point="isaaclab.envs:ManagerBasedRLEnv",
+    disable_env_checker=True,
+    kwargs={
+        "env_cfg_entry_point": f"vkus_grab_ext.custom_env_2_demo.rough_env_2_demo_cfg:G1RoughEnv2_demo_Cfg_PLAY",
+        "rsl_rl_cfg_entry_point": f"vkus_grab_ext.agents.rsl_rl_ppo_cfg:G1RoughPPORunnerCfg",
+        "skrl_cfg_entry_point": f"{agents.__name__}:skrl_rough_ppo_cfg.yaml",
+    },
+)
+
+
+gym.register(
+    id="Vkus_Ext-Isaac-Velocity-Flat-G1-v2-demo",
+    entry_point="isaaclab.envs:ManagerBasedRLEnv",
+    disable_env_checker=True,
+    kwargs={
+        "env_cfg_entry_point": f"vkus_grab_ext.custom_env_2_demo.flat_env_2_demo_cfg:G1FlatEnv2_demo_Cfg",
+        "rsl_rl_cfg_entry_point": f"vkus_grab_ext.agents.rsl_rl_ppo_cfg:G1FlatPPORunnerCfg",
+        "skrl_cfg_entry_point": f"{agents.__name__}:skrl_flat_ppo_cfg.yaml",
+    },
+)
+
+
+gym.register(
+    id="Vkus_Ext-Isaac-Velocity-Flat-G1-Play-v2-demo",
+    entry_point="isaaclab.envs:ManagerBasedRLEnv",
+    disable_env_checker=True,
+    kwargs={
+        "env_cfg_entry_point": f"vkus_grab_ext.custom_env_2_demo.flat_env_2_demo_cfg:G1FlatEnv2_demo_Cfg_PLAY",
+        "rsl_rl_cfg_entry_point": f"vkus_grab_ext.agents.rsl_rl_ppo_cfg:G1FlatPPORunnerCfg",
+        "skrl_cfg_entry_point": f"{agents.__name__}:skrl_flat_ppo_cfg.yaml",
+    },
+)
+
+
+
 # TRAINING MIDDLEWARE POLICY ENV 3 - robot with AG95 160 Dobot gripper 2 Finger
 
 gym.register(
